@@ -44,8 +44,9 @@ function render() {
 // Browsers block autoplay audio, so the AudioContext is created only after the
 // user enables sound via the toggle. Default: muted (persisted in localStorage).
 var TICK_KEY = 'countdown-tick-enabled';
-var tickEnabled = false;
-try { tickEnabled = localStorage.getItem(TICK_KEY) === '1'; } catch (e) {}
+// Sound defaults ON; only an explicit mute (stored as '0') silences it.
+var tickEnabled = true;
+try { tickEnabled = localStorage.getItem(TICK_KEY) !== '0'; } catch (e) {}
 var audioCtx = null;
 var lastTickSecond = -1;
 
@@ -95,6 +96,24 @@ tickBtn.addEventListener('click', function () {
     paintTickBtn();
 });
 paintTickBtn();
+
+// Sound is meant to start on page open. Browsers usually block autoplay audio,
+// so if the AudioContext is still suspended, unlock it on the first touch,
+// click or keypress anywhere on the page.
+if (tickEnabled) {
+    var ctx0 = ensureAudio();
+    if (!ctx0 || ctx0.state !== 'running') {
+        var unlockAudio = function () {
+            ensureAudio();
+            window.removeEventListener('pointerdown', unlockAudio);
+            window.removeEventListener('touchstart', unlockAudio);
+            window.removeEventListener('keydown', unlockAudio);
+        };
+        window.addEventListener('pointerdown', unlockAudio);
+        window.addEventListener('touchstart', unlockAudio);
+        window.addEventListener('keydown', unlockAudio);
+    }
+}
 
 render();
 setInterval(function () {

@@ -40,5 +40,70 @@ function render() {
     host.innerHTML = html;
 }
 
+// Clock-tick sound (Doomsday-clock style): one short mechanical click per second.
+// Browsers block autoplay audio, so the AudioContext is created only after the
+// user enables sound via the toggle. Default: muted (persisted in localStorage).
+var TICK_KEY = 'countdown-tick-enabled';
+var tickEnabled = false;
+try { tickEnabled = localStorage.getItem(TICK_KEY) === '1'; } catch (e) {}
+var audioCtx = null;
+var lastTickSecond = -1;
+
+function ensureAudio() {
+    if (!audioCtx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        audioCtx = new AC();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+}
+
+function playTick() {
+    var ctx = ensureAudio();
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    // Click: a very short high-passed noise burst, like a clock escapement.
+    var dur = 0.03;
+    var buffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < data.length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 3);
+    }
+    var src = ctx.createBufferSource();
+    src.buffer = buffer;
+    var hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 1800;
+    var gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.5, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    src.connect(hp).connect(gain).connect(ctx.destination);
+    src.start(t);
+}
+
+var tickBtn = document.getElementById('tick-toggle');
+function paintTickBtn() {
+    tickBtn.innerHTML = tickEnabled ? '&#128266;' : '&#128263;';
+    tickBtn.setAttribute('aria-pressed', tickEnabled ? 'true' : 'false');
+    tickBtn.classList.toggle('tick-on', tickEnabled);
+}
+tickBtn.addEventListener('click', function () {
+    tickEnabled = !tickEnabled;
+    try { localStorage.setItem(TICK_KEY, tickEnabled ? '1' : '0'); } catch (e) {}
+    if (tickEnabled) { ensureAudio(); lastTickSecond = -1; }
+    paintTickBtn();
+});
+paintTickBtn();
+
 render();
-setInterval(render, 1000);
+setInterval(function () {
+    render();
+    if (tickEnabled) {
+        var sec = Math.floor((TARGET - Date.now()) / 1000);
+        if (sec !== lastTickSecond && sec >= 0) {
+            lastTickSecond = sec;
+            playTick();
+        }
+    }
+}, 1000);

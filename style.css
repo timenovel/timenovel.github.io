@@ -200,3 +200,33 @@ body { background: #060a14; }
     text-shadow: 0 0 24px rgba(224, 105, 58, 0.5);
 }
 
+
+/* Tick sound toggle */
+.tick-toggle {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 30;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(240, 226, 190, 0.35);
+    background: rgba(10, 8, 6, 0.55);
+    color: rgba(240, 226, 190, 0.85);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.tick-toggle:hover,
+.tick-toggle:focus-visible {
+    border-color: rgba(240, 226, 190, 0.8);
+    color: #f0e2be;
+    outline: none;
+    box-shadow: 0 0 14px rgba(240, 226, 190, 0.25);
+}
+.tick-toggle.tick-on {
+    border-color: rgba(224, 105, 58, 0.8);
+    box-shadow: 0 0 14px rgba(224, 105, 58, 0.35);
+}

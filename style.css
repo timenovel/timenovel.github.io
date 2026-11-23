@@ -111,7 +111,7 @@ body { background: #060a14; }
     justify-content: center;
     text-align: center;
     padding: 56px 20px;
-    background: radial-gradient(ellipse at center, rgba(3, 5, 12, 0.45) 0%, rgba(3, 5, 12, 0.12) 55%, rgba(3, 5, 12, 0) 100%);
+    background: radial-gradient(ellipse at center, rgba(3, 5, 12, 0.16) 0%, rgba(3, 5, 12, 0.05) 55%, rgba(3, 5, 12, 0) 100%);
 }
 
 .zero-clock {
@@ -137,9 +137,11 @@ body { background: #060a14; }
     letter-spacing: 0.02em;
     color: #f8efdb;
     text-shadow:
-        0 0 12px rgba(216, 178, 92, 0.45),
-        0 0 42px rgba(224, 105, 58, 0.35),
-        0 6px 30px rgba(0, 0, 0, 0.95);
+        0 0 10px rgba(255, 236, 190, 0.55),
+        0 0 34px rgba(216, 178, 92, 0.55),
+        0 0 70px rgba(224, 105, 58, 0.45),
+        0 3px 10px rgba(0, 0, 0, 0.95),
+        0 8px 34px rgba(0, 0, 0, 0.9);
 }
 
 .zero-sep {
@@ -157,7 +159,7 @@ body { background: #060a14; }
     font-size: clamp(15px, 2.2vw, 22px);
     font-weight: 700;
     color: rgba(240, 226, 190, 0.85);
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95), 0 2px 16px rgba(0, 0, 0, 0.9);
 }
 
 .zero-done {
